@@ -6,6 +6,7 @@
  */
 import java.net.*;
 import java.io.*;
+import java.util.*;
 
 public class Server {
 
@@ -33,10 +34,36 @@ public class Server {
 				OutputStream output = socket.getOutputStream();
 				PrintWriter writer = new PrintWriter(output, true);
 
-				// TODO: Receive Actions
+				int receivedCommand = 0;
 				do {
+					receivedCommand = Integer.parseInt(reader.readLine());
+					switch (receivedCommand) {
+						case 1:
+							// Send back the Date and Time
+							writer.println(new Date().toString());
+							break;
+						case 2:
+							// Send back the Uptime of the server
+							// TODO: Get Runtime
+							break;
+						case 3:
+							// TODO: Get Memory Usage
+							break;
+						case 4:
+							// TODO: Netstats
+							break;
+						case 5:
+							// TODO: Current Users
+							break;
+						case 6:
+							// TODO: Running Processes
+							break;
+						default:
+							writer.println("ERROR: This is not a valid command!");
+							break;
+					}
 					
-				} while (false);
+				} while (receivedCommand != 0);
 				
 				// Be nice and close the socket.
 				socket.close();

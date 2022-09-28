@@ -32,8 +32,33 @@ public class Client {
 
 			// Do stuff
 			Scanner scanner = new Scanner(System.in);
-			System.out.println("What action would you like to perform today?");
-			// TODO: Actions
+			// List of inputCommand valid options:
+			//	0: Quit
+			//	1: Date and Time
+			//	2: Uptime
+			//	3: Memory Use
+			//	4: Netstat
+			//	5: Current Users
+			//	6: Running Processes
+			int inputCommand = 0;
+			do {
+				System.out.println("What action would you like to perform today?");
+				System.out.println("The following actions are available:");
+				System.out.println("1: Date and Time");
+				System.out.println("2: Uptime");
+				System.out.println("3: Memory Usage");
+				System.out.println("4: Netstats");
+				System.out.println("5: Current Users");
+				System.out.println("6: Running Processes");
+				System.out.println("Or enter 0 to quit.");
+				inputCommand = scanner.nextInt();
+
+				writer.println(inputCommand);
+				// Wait for response.
+				String res = reader.readLine();
+				System.out.println(res);
+				
+			} while (inputCommand != 0);
 
 			// Be nice and close your streams
 			scanner.close();
