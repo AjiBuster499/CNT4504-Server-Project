@@ -6,6 +6,8 @@
  */
 import java.net.*;
 import java.io.*;
+import java.lang.management.*;
+import com.sun.management.OperatingSystemMXBean;
 import java.util.*;
 
 public class Server {
@@ -44,10 +46,14 @@ public class Server {
 							break;
 						case 2:
 							// Send back the Uptime of the server
-							// TODO: Get Runtime
+							String time = new Scanner(new FileInputStream("/proc/uptime")).next();
+							writer.println(time);
 							break;
 						case 3:
-							// TODO: Get Memory Usage
+							// Send back the memory usage
+							OperatingSystemMXBean oSystemMXBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+							long usedMem = oSystemMXBean.getFreeMemorySize() - oSystemMXBean.getTotalMemorySize();
+							writer.println(usedMem);
 							break;
 						case 4:
 							// TODO: Netstats
@@ -73,4 +79,6 @@ public class Server {
 			System.out.println("Server Exception: " + e.getMessage());
 		}
 	}
+
 }
+
