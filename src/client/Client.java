@@ -1,3 +1,4 @@
+
 /**
  * Name: Samuel Mikell
  * Class: CNT4504 Computer Networking
@@ -10,10 +11,11 @@ import java.io.*;
 import java.util.*;
 
 public class Client {
-	
+
 	// Usage: java Client <hostname> <port>
 	public static void main(String[] args) {
-		if (args.length < 2) return;
+		if (args.length < 2)
+			return;
 
 		String hostname = args[0];
 		int port = Integer.parseInt(args[1]);
@@ -33,13 +35,13 @@ public class Client {
 			// Do stuff
 			Scanner scanner = new Scanner(System.in);
 			// List of inputCommand valid options:
-			//	0: Quit
-			//	1: Date and Time
-			//	2: Uptime
-			//	3: Memory Use
-			//	4: Netstat
-			//	5: Current Users
-			//	6: Running Processes
+			// 0: Quit
+			// 1: Date and Time
+			// 2: Uptime
+			// 3: Memory Use
+			// 4: Netstat
+			// 5: Current Users
+			// 6: Running Processes
 			int inputCommand = 0;
 			do {
 				System.out.println("What action would you like to perform today?");
@@ -57,19 +59,17 @@ public class Client {
 				// Wait for response.
 				String res = reader.readLine();
 				System.out.println(res);
-				
+
 			} while (inputCommand != 0);
 
 			// Be nice and close your streams
 			scanner.close();
-
 
 		} catch (UnknownHostException e) {
 			System.out.println("Server not found: " + e.getMessage());
 		} catch (IOException e) {
 			System.out.println("I/O Error: " + e.getMessage());
 		}
-
 
 	}
 }

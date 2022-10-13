@@ -1,3 +1,4 @@
+
 /**
  * Name: Samuel Mikell
  * Class: CNT4504 Computer Networking
@@ -14,7 +15,8 @@ public class Server {
 
 	// Usage: java Server <port>
 	public static void main(String[] args) {
-		if (args.length < 1) return;
+		if (args.length < 1)
+			return;
 
 		// Verify the port
 		int port = Integer.parseInt(args[0]);
@@ -51,12 +53,26 @@ public class Server {
 							break;
 						case 3:
 							// Send back the memory usage
-							OperatingSystemMXBean oSystemMXBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+							OperatingSystemMXBean oSystemMXBean = (OperatingSystemMXBean) ManagementFactory
+									.getOperatingSystemMXBean();
 							long usedMem = oSystemMXBean.getFreeMemorySize() - oSystemMXBean.getTotalMemorySize();
 							writer.println(usedMem);
 							break;
 						case 4:
 							// TODO: Netstats
+							String[] cmd = { "/bin/bash", "-c", "netstat" };
+							Process proc = new ProcessBuilder(cmd).start();
+							BufferedReader bufReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+							String line = "";
+							while ((line = bufReader.readLine()) != null) {
+								writer.println(line);
+							}
+
+							try {
+								proc.waitFor();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
 							break;
 						case 5:
 							// TODO: Current Users
@@ -68,9 +84,9 @@ public class Server {
 							writer.println("ERROR: This is not a valid command!");
 							break;
 					}
-					
+
 				} while (receivedCommand != 0);
-				
+
 				// Be nice and close the socket.
 				socket.close();
 			}
@@ -81,4 +97,3 @@ public class Server {
 	}
 
 }
-
