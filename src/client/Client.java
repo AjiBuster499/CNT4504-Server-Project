@@ -14,6 +14,7 @@ public class Client {
 
 	// Usage: java Client <hostname> <port>
 	public static void main(String[] args) {
+		// TODO: Multithread it baby!
 		if (args.length < 2)
 			return;
 
@@ -34,6 +35,7 @@ public class Client {
 
 			// Do stuff
 			Scanner scanner = new Scanner(System.in);
+
 			// List of inputCommand valid options:
 			// 0: Quit
 			// 1: Date and Time

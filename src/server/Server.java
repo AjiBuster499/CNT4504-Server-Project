@@ -42,24 +42,30 @@ public class Server {
 				do {
 					receivedCommand = Integer.parseInt(reader.readLine());
 					switch (receivedCommand) {
-						case 1:
+						case 1: {
 							// Send back the Date and Time
 							writer.println(new Date().toString());
 							break;
-						case 2:
+						}
+						case 2: {
 							// Send back the Uptime of the server
-							String time = new Scanner(new FileInputStream("/proc/uptime")).next();
+							// I'm using a named scanner to ensure I can close the stream like a good programmer.
+							// I'm unsure how to close an anonymous Scanner (or if it closes automatically).
+							Scanner scanner = new Scanner(new FileInputStream("/proc/uptime"));
+							String time = scanner.next();
 							writer.println(time);
+							scanner.close();
 							break;
-						case 3:
+						}
+						case 3: {
 							// Send back the memory usage
 							OperatingSystemMXBean oSystemMXBean = (OperatingSystemMXBean) ManagementFactory
 									.getOperatingSystemMXBean();
 							long usedMem = oSystemMXBean.getFreeMemorySize() - oSystemMXBean.getTotalMemorySize();
 							writer.println(usedMem);
 							break;
-						case 4:
-							// TODO: Netstats
+						}
+						case 4: {
 							String[] cmd = { "/bin/bash", "-c", "netstat" };
 							Process proc = new ProcessBuilder(cmd).start();
 							BufferedReader bufReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
@@ -74,15 +80,43 @@ public class Server {
 								e.printStackTrace();
 							}
 							break;
-						case 5:
-							// TODO: Current Users
+						}
+						case 5: {
+							String[] cmd = { "/bin/bash", "-c", "who" };
+							Process proc = new ProcessBuilder(cmd).start();
+							BufferedReader bufReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+							String line = "";
+							while ((line = bufReader.readLine()) != null) {
+								writer.println(line);
+							}
+
+							try {
+								proc.waitFor();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
 							break;
-						case 6:
-							// TODO: Running Processes
+						}
+						case 6: {
+							String[] cmd = { "/bin/bash", "-c", "ps", "-aux" };
+							Process proc = new ProcessBuilder(cmd).start();
+							BufferedReader bufReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+							String line = "";
+							while ((line = bufReader.readLine()) != null) {
+								writer.println(line);
+							}
+
+							try {
+								proc.waitFor();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
 							break;
-						default:
+						}
+						default: {
 							writer.println("ERROR: This is not a valid command!");
 							break;
+						}
 					}
 
 				} while (receivedCommand != 0);
