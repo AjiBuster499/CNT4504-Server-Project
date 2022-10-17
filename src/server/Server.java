@@ -49,7 +49,8 @@ public class Server {
 						}
 						case 2: {
 							// Send back the Uptime of the server
-							// I'm using a named scanner to ensure I can close the stream like a good programmer.
+							// I'm using a named scanner to ensure I can close the stream like a good
+							// programmer.
 							// I'm unsure how to close an anonymous Scanner (or if it closes automatically).
 							Scanner scanner = new Scanner(new FileInputStream("/proc/uptime"));
 							String time = scanner.next();

@@ -7,6 +7,8 @@
  */
 
 import java.net.*;
+import java.time.Duration;
+import java.time.Instant;
 import java.io.*;
 import java.util.*;
 
@@ -57,10 +59,51 @@ public class Client {
 				System.out.println("Or enter 0 to quit.");
 				inputCommand = scanner.nextInt();
 
-				writer.println(inputCommand);
-				// Wait for response.
-				String res = reader.readLine();
-				System.out.println(res);
+				System.out.println("How many clients would you like to spin up?");
+				System.out.println("Options: 1, 5, 10, 15, 20, 25");
+				int threadCount = scanner.nextInt();
+
+				// time taken to complete once.
+				long elapsedTime = 0;
+				// complete list of times.
+				ArrayList<Long> times = new ArrayList<Long>();
+				for (int i = 0; i < threadCount; i++) {
+					final int in = inputCommand;
+					Instant start = Instant.now();
+					Thread th = new Thread(new Runnable() {
+						// Running out of names.
+						// This is a wonkly alias to inputCommand in order to get around scoping and names.
+						int p = in;
+
+						@Override
+						public void run() {
+							try {
+								writer.println(p);
+								// Wait for response.
+								String res;
+								res = reader.readLine();
+								System.out.println(res);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+					});
+					th.start();
+					Instant finish = Instant.now();
+					// Collecting our times.
+					elapsedTime = Duration.between(start, finish).toMillis();
+					times.add(elapsedTime);
+				}
+				// Mathing the times.
+				long avgTime = 0;
+				System.out.println("Per Client Time:");
+				for (long time : times) {
+					avgTime += time;
+					System.out.println(time);
+				}
+				System.out.println("Total Time: " +  avgTime); // The name is a little misleading, because we haven't averaged just yet.
+				avgTime /= threadCount;
+				System.out.println("Average Time: " + avgTime);
 
 			} while (inputCommand != 0);
 
