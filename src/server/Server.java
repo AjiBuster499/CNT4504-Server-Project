@@ -7,8 +7,6 @@
  */
 import java.net.*;
 import java.io.*;
-import java.lang.management.*;
-import com.sun.management.OperatingSystemMXBean;
 import java.util.*;
 
 public class Server {
@@ -60,10 +58,19 @@ public class Server {
 						}
 						case 3: {
 							// Send back the memory usage
-							OperatingSystemMXBean oSystemMXBean = (OperatingSystemMXBean) ManagementFactory
-									.getOperatingSystemMXBean();
-							long usedMem = oSystemMXBean.getFreeMemorySize() - oSystemMXBean.getTotalMemorySize();
-							writer.println(usedMem);
+							String[] cmd = { "/bin/bash", "-c", "cat", "/proc/meminfo" };
+							Process proc = new ProcessBuilder(cmd).start();
+							BufferedReader bufReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+							String line = "";
+							while ((line = bufReader.readLine()) != null) {
+								writer.println(line);
+							}
+
+							try {
+								proc.waitFor();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
 							break;
 						}
 						case 4: {
