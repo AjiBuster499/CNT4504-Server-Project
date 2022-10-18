@@ -87,6 +87,7 @@ public class Client {
 								while ((res = reader.readLine()) != null) {
 									System.out.println(res);
 								}
+								Thread.currentThread().interrupt();
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
@@ -97,10 +98,9 @@ public class Client {
 					// Collecting our times.
 					elapsedTime = Duration.between(start, finish).toNanos();
 					times.add(elapsedTime);
-					th.interrupt();
 				}
 				// Cheesing
-				Thread.sleep(5000);
+				Thread.sleep(3000);
 				// Mathing the times.
 				long avgTime = 0;
 				System.out.println("Per Client Time:");
