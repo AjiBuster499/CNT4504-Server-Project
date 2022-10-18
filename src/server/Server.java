@@ -40,6 +40,11 @@ public class Server {
 				do {
 					receivedCommand = Integer.parseInt(reader.readLine());
 					switch (receivedCommand) {
+						case 0: {
+							// Do Nothing
+							System.out.println("Client Disconnected");
+							break;
+						}
 						case 1: {
 							// Send back the Date and Time
 							writer.println(new Date().toString());
@@ -47,18 +52,24 @@ public class Server {
 						}
 						case 2: {
 							// Send back the Uptime of the server
-							// I'm using a named scanner to ensure I can close the stream like a good
-							// programmer.
-							// I'm unsure how to close an anonymous Scanner (or if it closes automatically).
-							Scanner scanner = new Scanner(new FileInputStream("/proc/uptime"));
-							String time = scanner.next();
-							writer.println(time);
-							scanner.close();
+							String[] cmd = { "/bin/bash", "-c", "uptime" };
+							Process proc = new ProcessBuilder(cmd).start();
+							BufferedReader bufReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+							String line = "";
+							while ((line = bufReader.readLine()) != null) {
+								writer.println(line);
+							}
+
+							try {
+								proc.waitFor();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
 							break;
 						}
 						case 3: {
 							// Send back the memory usage
-							String[] cmd = { "/bin/bash", "-c", "cat", "/proc/meminfo" };
+							String[] cmd = { "/bin/bash", "-c", "free" };
 							Process proc = new ProcessBuilder(cmd).start();
 							BufferedReader bufReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 							String line = "";

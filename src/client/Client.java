@@ -1,5 +1,5 @@
 
-/**
+/*
  * Name: Samuel Mikell
  * Class: CNT4504 Computer Networking
  * Date: 22 September 2022 (Started)
@@ -58,56 +58,60 @@ public class Client {
 				System.out.println("Or enter 0 to quit.");
 				inputCommand = scanner.nextInt();
 
-				if (inputCommand != 0) {
-					System.out.println("How many clients would you like to spin up?");
-					System.out.println("Options: 1, 5, 10, 15, 20, 25");
-					int threadCount = scanner.nextInt();
-
-					// time taken to complete once.
-					long elapsedTime = 0;
-					// complete list of times.
-					ArrayList<Long> times = new ArrayList<Long>();
-					for (int i = 0; i < threadCount; i++) {
-						final int in = inputCommand;
-						Instant start = Instant.now();
-						Thread th = new Thread(new Runnable() {
-							// Running out of names.
-							// This is a wonkly alias to inputCommand in order to get around scoping and
-							// names.
-							int p = in;
-
-							@Override
-							public void run() {
-								try {
-									writer.println(p);
-									// Wait for response.
-									String res;
-									res = reader.readLine();
-									System.out.println(res);
-								} catch (IOException e) {
-									e.printStackTrace();
-								}
-							}
-						});
-						th.start();
-						Instant finish = Instant.now();
-						// Collecting our times.
-						elapsedTime = Duration.between(start, finish).toNanos();
-						times.add(elapsedTime);
-					}
-					// Mathing the times.
-					long avgTime = 0;
-					System.out.println("Per Client Time:");
-					for (long time : times) {
-						avgTime += time;
-						System.out.println(time + " ms");
-					}
-					System.out.println("Total Time: " + avgTime + " ms"); // The name is a little misleading, because we haven't
-																	// averaged just yet.
-					avgTime /= threadCount;
-					System.out.println("Average Time: " + avgTime + " ms");
-
+				if (inputCommand == 0) {
+					writer.println(inputCommand);
+					System.exit(0);
 				}
+				System.out.println("How many clients would you like to spin up?");
+				System.out.println("Options: 1, 5, 10, 15, 20, 25");
+				int threadCount = scanner.nextInt();
+
+				// time taken to complete once.
+				long elapsedTime = 0;
+				// complete list of times.
+				ArrayList<Long> times = new ArrayList<Long>();
+				for (int i = 0; i < threadCount; i++) {
+					final int in = inputCommand;
+					Instant start = Instant.now();
+					Thread th = new Thread(new Runnable() {
+						// Running out of names.
+						// This is a wonkly alias to inputCommand in order to get around scoping
+						int p = in;
+
+						@Override
+						public void run() {
+							try {
+								writer.println(p);
+								// Wait for response.
+								String res = "";
+								while ((res = reader.readLine()) != null) {
+									System.out.println(res);
+								}
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+					});
+					th.start();
+					Instant finish = Instant.now();
+					// Collecting our times.
+					elapsedTime = Duration.between(start, finish).toNanos();
+					times.add(elapsedTime);
+					th.interrupt();
+				}
+				// Cheesing
+				Thread.sleep(5000);
+				// Mathing the times.
+				long avgTime = 0;
+				System.out.println("Per Client Time:");
+				for (long time : times) {
+					avgTime += time;
+					System.out.println(time + " ns");
+				}
+				// The name is a little misleading, because we haven't averaged just yet.
+				System.out.println("Total Time: " + avgTime + " ns");
+				avgTime /= threadCount;
+				System.out.println("Average Time: " + avgTime + " ns");
 
 			} while (inputCommand != 0);
 
@@ -118,7 +122,8 @@ public class Client {
 			System.out.println("Server not found: " + e.getMessage());
 		} catch (IOException e) {
 			System.out.println("I/O Error: " + e.getMessage());
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
-
 	}
 }
